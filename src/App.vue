@@ -5,14 +5,6 @@
 
       <div v-if="apiError" class="alert">{{ apiError }}</div>
 
-      <ProductForm
-        :categories="categories"
-        v-model="newProduct"
-        :loading="submitting"
-        :errors="errors"
-        @submit="submitProduct"
-      />
-
       <div class="filters">
         <div class="form-group">
           <label for="search">Search:</label>
@@ -28,7 +20,21 @@
         </div>
       </div>
 
-      <ProductTable :products="products" :loading="loadingProducts" />
+      <div class="main-content">
+        <div class="form-section">
+          <ProductForm
+            :categories="categories"
+            v-model="newProduct"
+            :loading="submitting"
+            :errors="errors"
+            @submit="submitProduct"
+          />
+        </div>
+
+        <div class="table-section">
+          <ProductTable :products="products" :loading="loadingProducts" />
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -138,58 +144,115 @@ onMounted(() => {
 .container {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 20px;
-  font-family: Arial, sans-serif;
+  padding: 1rem;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  line-height: 1.6;
+  color: #374151;
 }
 
 h1 {
-  color: #333;
-  border-bottom: 2px solid #4CAF50;
-  padding-bottom: 10px;
+  color: #1f2937;
+  border-bottom: 3px solid #3b82f6;
+  padding-bottom: 1rem;
+  margin-bottom: 2rem;
+  font-size: 2rem;
+  font-weight: 700;
+  text-align: center;
 }
 
 .alert {
-  background: #fef2f2;
-  border: 1px solid #f5c2c7;
-  color: #991b1b;
-  padding: 16px;
-  margin-bottom: 20px;
-  border-radius: 8px;
+  background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+  border: 1px solid #fca5a5;
+  color: #dc2626;
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  font-weight: 500;
 }
 
 .filters {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 20px;
-  background: #f9f9f9;
-  padding: 20px;
-  border-radius: 8px;
-  margin-bottom: 20px;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  padding: 1.5rem;
+  border-radius: 16px;
+  margin-bottom: 2rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e2e8f0;
+}
+
+@media (min-width: 768px) {
+  .container {
+    padding: 2rem;
+  }
+
+  h1 {
+    font-size: 2.5rem;
+    text-align: left;
+  }
+
+  .filters {
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+  }
 }
 
 .form-group {
-  margin-bottom: 15px;
+  margin-bottom: 1rem;
 }
 
 .form-group label {
   display: block;
-  margin-bottom: 5px;
-  font-weight: bold;
-  color: #555;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+  color: #374151;
+  font-size: 0.875rem;
 }
 
 .form-group input,
 .form-group select {
   width: 100%;
-  padding: 8px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  font-size: 14px;
+  padding: 0.75rem 1rem;
+  border: 2px solid #e5e7eb;
+  border-radius: 8px;
+  font-size: 1rem;
+  background: white;
+  transition: all 0.2s ease;
+  box-sizing: border-box;
 }
 
 .form-group input:focus,
 .form-group select:focus {
   outline: none;
-  border-color: #4CAF50;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  transform: translateY(-1px);
+}
+
+.form-group input:hover,
+.form-group select:hover {
+  border-color: #9ca3af;
+}
+
+.main-content {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+  margin-top: 2rem;
+}
+
+.form-section,
+.table-section {
+  display: flex;
+  flex-direction: column;
+}
+
+@media (min-width: 1024px) {
+  .main-content {
+    grid-template-columns: 1fr 1fr;
+    gap: 3rem;
+  }
 }
 </style>
