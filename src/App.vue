@@ -3,167 +3,135 @@
     <div class="container">
       <h1>Product Management</h1>
 
-      <!-- Add Product Form -->
-      <div class="card">
-        <h2>Add New Product</h2>
-        <form @submit.prevent="submitProduct">
-          <div class="form-group">
-            <label>Name *</label>
-            <input v-model="newProduct.name" type="text" required />
-            <span v-if="errors.name" class="error">{{ errors.name[0] }}</span>
-          </div>
+      <div v-if="apiError" class="alert">{{ apiError }}</div>
 
-          <div class="form-group">
-            <label>Category *</label>
-            <select v-model="newProduct.category_id" required>
-              <option value="">Select category</option>
-              <option v-for="cat in categories" :key="cat.id" :value="cat.id">
-                {{ cat.name }}
-              </option>
-            </select>
-            <span v-if="errors.category_id" class="error">{{ errors.category_id[0] }}</span>
-          </div>
+      <ProductForm
+        :categories="categories"
+        v-model="newProduct"
+        :loading="submitting"
+        :errors="errors"
+        @submit="submitProduct"
+      />
 
-          <div class="form-group">
-            <label>Price *</label>
-            <input v-model="newProduct.price" type="number" step="0.01" required />
-            <span v-if="errors.price" class="error">{{ errors.price[0] }}</span>
-          </div>
-
-          <div class="form-group">
-            <label>Stock *</label>
-            <input v-model="newProduct.stock" type="number" required />
-            <span v-if="errors.stock" class="error">{{ errors.stock[0] }}</span>
-          </div>
-
-          <button type="submit" :disabled="loading">
-            {{ loading ? 'Adding...' : 'Add Product' }}
-          </button>
-        </form>
-      </div>
-
-      <!-- Filters -->
       <div class="filters">
         <div class="form-group">
-          <label>Search:</label>
-          <input v-model="filters.search" placeholder="Search by name..." />
+          <label for="search">Search:</label>
+          <input id="search" v-model="filters.search" placeholder="Search by name..." />
         </div>
 
         <div class="form-group">
-          <label>Category:</label>
-          <select v-model="filters.category_id">
+          <label for="category-filter">Category:</label>
+          <select id="category-filter" v-model="filters.category_id">
             <option value="">All Categories</option>
-            <option v-for="cat in categories" :key="cat.id" :value="cat.id">
-              {{ cat.name }}
-            </option>
+            <option v-for="cat in categories" :key="cat.id" :value="cat.id">{{ cat.name }}</option>
           </select>
         </div>
       </div>
 
-      <!-- Products Table -->
-      <div class="card">
-        <h2>Products List</h2>
-        <table>
-          <thead>
-          <tr>
-            <th>Name</th>
-            <th>Category</th>
-            <th>Price</th>
-            <th>Stock</th>
-          </tr>
-          </thead>
-          <tbody>
-          <tr v-for="product in products" :key="product.id">
-            <td>{{ product.name }}</td>
-            <td>{{ product.category?.name }}</td>
-            <td>${{ parseFloat(product.price).toFixed(2) }}</td>
-            <td>{{ product.stock }}</td>
-          </tr>
-          <tr v-if="products.length === 0">
-            <td colspan="4" class="text-center">No products found</td>
-          </tr>
-          </tbody>
-        </table>
-      </div>
+      <ProductTable :products="products" :loading="loadingProducts" />
     </div>
   </div>
 </template>
 
-<script setup>
-import { ref, onMounted, watch } from 'vue';
-import api from './services/api';
+<script setup lang="ts">
+import { ref, onMounted, watch } from 'vue'
+import ProductForm from './components/ProductForm.vue'
+import ProductTable from './components/ProductTable.vue'
+import api from './services/api'
+import type { Category, Product, ProductFormState, ValidationErrors } from './types'
 
-const products = ref([]);
-const categories = ref([]);
-const loading = ref(false);
-const errors = ref({});
+const products = ref<Product[]>([])
+const categories = ref<Category[]>([])
+const loadingProducts = ref(false)
+const submitting = ref(false)
+const apiError = ref<string | null>(null)
+const errors = ref<ValidationErrors>({})
+const filterTimeout = ref<number | undefined>(undefined)
 
-const newProduct = ref({
+const newProduct = ref<ProductFormState>({
   name: '',
   category_id: '',
   price: '',
   stock: '',
-});
+})
 
 const filters = ref({
   search: '',
+  category_id: '' as number | '',
+})
+
+const defaultProductState = (): ProductFormState => ({
+  name: '',
   category_id: '',
-});
+  price: '',
+  stock: '',
+})
 
-// Load products
 const loadProducts = async () => {
+  loadingProducts.value = true
+  apiError.value = null
+
   try {
-    const params = {};
-    if (filters.value.search) params.search = filters.value.search;
-    if (filters.value.category_id) params.category_id = filters.value.category_id;
+    const params: Record<string, string | number> = {}
+    if (filters.value.search) params.search = filters.value.search
+    if (filters.value.category_id) params.category_id = filters.value.category_id
 
-    const response = await api.getProducts(params);
-    products.value = response.data.data;
-  } catch (error) {
-    console.error('Error loading products:', error);
+    const response = await api.getProducts(params)
+    products.value = response.data.data
+  } catch (error: any) {
+    apiError.value = 'Unable to load products. Please try again.'
+    console.error('Error loading products:', error)
+  } finally {
+    loadingProducts.value = false
   }
-};
+}
 
-// Load categories
 const loadCategories = async () => {
   try {
-    const response = await api.getCategories();
-    categories.value = response.data.data;
-  } catch (error) {
-    console.error('Error loading categories:', error);
+    const response = await api.getCategories()
+    categories.value = response.data.data
+  } catch (error: any) {
+    apiError.value = 'Unable to load categories. Please refresh the page.'
+    console.error('Error loading categories:', error)
   }
-};
+}
 
-// Submit new product
 const submitProduct = async () => {
-  loading.value = true;
-  errors.value = {};
+  submitting.value = true
+  errors.value = {}
+  apiError.value = null
 
   try {
-    await api.createProduct(newProduct.value);
-    newProduct.value = { name: '', category_id: '', price: '', stock: '' };
-    await loadProducts();
-  } catch (error) {
+    await api.createProduct(newProduct.value)
+    newProduct.value = defaultProductState()
+    await loadProducts()
+  } catch (error: any) {
     if (error.response?.data?.errors) {
-      errors.value = error.response.data.errors;
+      errors.value = error.response.data.errors
     } else {
-      alert('Error creating product');
+      apiError.value = 'Unable to create product. Please check your input and try again.'
+      console.error('Error creating product:', error)
     }
   } finally {
-    loading.value = false;
+    submitting.value = false
   }
-};
+}
 
-// Watch for filter changes
-watch(filters, () => {
-  loadProducts();
-}, { deep: true });
+watch(
+  filters,
+  () => {
+    if (filterTimeout.value) {
+      window.clearTimeout(filterTimeout.value)
+    }
+    filterTimeout.value = window.setTimeout(loadProducts, 300)
+  },
+  { deep: true },
+)
 
-// Load data on mount
 onMounted(() => {
-  loadCategories();
-  loadProducts();
-});
+  loadCategories()
+  loadProducts()
+})
 </script>
 
 <style scoped>
@@ -178,6 +146,15 @@ h1 {
   color: #333;
   border-bottom: 2px solid #4CAF50;
   padding-bottom: 10px;
+}
+
+.alert {
+  background: #fef2f2;
+  border: 1px solid #f5c2c7;
+  color: #991b1b;
+  padding: 16px;
+  margin-bottom: 20px;
+  border-radius: 8px;
 }
 
 .card {
