@@ -1,42 +1,115 @@
 # impinity-frontend
 
-This template should help get you started developing with Vue 3 in Vite.
+A Vue 3 + Vite frontend application for product management. This repo is the frontend only and expects a separate backend API to be available.
 
-## Recommended IDE Setup
+## Prerequisites
 
-[VS Code](https://code.visualstudio.com/) + [Vue (Official)](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
+- Node.js 20.x or newer
+- npm (bundled with Node.js)
+- Backend API service available and running
 
-## Recommended Browser Setup
+## Local setup
 
-- Chromium-based browsers (Chrome, Edge, Brave, etc.):
-  - [Vue.js devtools](https://chromewebstore.google.com/detail/vuejs-devtools/nhdogjmejiglipccpnnnanhbledajbpd)
-  - [Turn on Custom Object Formatter in Chrome DevTools](http://bit.ly/object-formatters)
-- Firefox:
-  - [Vue.js devtools](https://addons.mozilla.org/en-US/firefox/addon/vue-js-devtools/)
-  - [Turn on Custom Object Formatter in Firefox DevTools](https://fxdx.dev/firefox-devtools-custom-object-formatters/)
+1. Clone the repo:
 
-## Type Support for `.vue` Imports in TS
+```sh
+git clone <repository-url>
+cd impinity-frontend
+```
 
-TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) to make the TypeScript language service aware of `.vue` types.
-
-## Customize configuration
-
-See [Vite Configuration Reference](https://vite.dev/config/).
-
-## Project Setup
+2. Install dependencies:
 
 ```sh
 npm install
 ```
 
-### Compile and Hot-Reload for Development
+3. Ensure the frontend environment file is present:
+
+```sh
+cp .env .env.local
+```
+
+The existing `.env` file already contains:
+
+```env
+VITE_API_BASE_URL=http://impinity.test/api
+```
+
+Update this value to match your backend API URL if needed.
+
+## Frontend commands
+
+- Start the development server:
 
 ```sh
 npm run dev
 ```
 
-### Type-Check, Compile and Minify for Production
+- Build for production:
 
 ```sh
 npm run build
 ```
+
+- Preview the production build locally:
+
+```sh
+npm run preview
+```
+
+- Run type checking:
+
+```sh
+npm run type-check
+```
+
+## Backend setup (example)
+
+This repository does not include the backend code. The backend must be started separately. Below is an example workflow for a Laravel backend. Adapt these commands to match your backend stack.
+
+### Example Laravel backend commands
+
+```sh
+cd ../your-backend-repo
+composer install
+cp .env.example .env
+php artisan key:generate
+php artisan migrate
+php artisan db:seed
+php artisan serve
+```
+
+Once the backend is running, make sure the frontend `VITE_API_BASE_URL` points to the backend API, for example:
+
+```env
+VITE_API_BASE_URL=http://localhost:8000/api
+```
+
+## Migrations and seed data
+
+If your backend is Laravel, run:
+
+```sh
+php artisan migrate
+php artisan db:seed
+```
+
+For other backend frameworks, use the appropriate commands for database setup and seed data according to your backend repository.
+
+## Running frontend and backend together
+
+1. Start the backend service first.
+2. Confirm the backend API is reachable at the configured URL.
+3. Start the frontend with:
+
+```sh
+npm run dev
+```
+
+4. Open the URL shown by Vite (typically `http://localhost:5173`).
+
+## Notes
+
+- `node_modules` is not included in the repo archive. Run `npm install` after extraction.
+- If you do not yet have a backend, you can replace `VITE_API_BASE_URL` with a mock server or API stub.
+- This repository is a frontend client designed to work with an existing API.
