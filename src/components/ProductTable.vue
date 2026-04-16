@@ -42,3 +42,45 @@ const formatPrice = (price: number | string) => {
   return Number.isNaN(amount) ? '0.00' : amount.toFixed(2)
 }
 </script>
+
+<style scoped>
+.card {
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.card h2 {
+  margin-top: 0;
+  color: #555;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+table th,
+table td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+table th {
+  background-color: #f2f2f2;
+  font-weight: bold;
+  color: #555;
+}
+
+table tr:hover {
+  background-color: #f5f5f5;
+}
+
+.text-center {
+  text-align: center;
+}
+</style>

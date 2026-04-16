@@ -157,18 +157,14 @@ h1 {
   border-radius: 8px;
 }
 
-.card {
-  background: #fff;
-  border: 1px solid #ddd;
-  border-radius: 8px;
+.filters {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  background: #f9f9f9;
   padding: 20px;
+  border-radius: 8px;
   margin-bottom: 20px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-}
-
-.card h2 {
-  margin-top: 0;
-  color: #555;
 }
 
 .form-group {
@@ -195,67 +191,5 @@ h1 {
 .form-group select:focus {
   outline: none;
   border-color: #4CAF50;
-}
-
-.error {
-  color: #f44336;
-  font-size: 12px;
-  margin-top: 5px;
-  display: block;
-}
-
-button {
-  background-color: #4CAF50;
-  color: white;
-  padding: 10px 20px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 16px;
-}
-
-button:hover {
-  background-color: #45a049;
-}
-
-button:disabled {
-  background-color: #ccc;
-  cursor: not-allowed;
-}
-
-.filters {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 20px;
-  background: #f9f9f9;
-  padding: 20px;
-  border-radius: 8px;
-  margin-bottom: 20px;
-}
-
-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-table th,
-table td {
-  padding: 12px;
-  text-align: left;
-  border-bottom: 1px solid #ddd;
-}
-
-table th {
-  background-color: #f2f2f2;
-  font-weight: bold;
-  color: #555;
-}
-
-table tr:hover {
-  background-color: #f5f5f5;
-}
-
-.text-center {
-  text-align: center;
 }
 </style>
