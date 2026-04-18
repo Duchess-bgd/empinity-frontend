@@ -1,8 +1,8 @@
 <template>
   <div class="stats-grid">
     <div class="stat-card">
-      <p class="stat-label">Total products {{ totalProducts }}</p>
-      <!-- <p class="stat-value">{{ totalProducts }}</p> -->
+      <p class="stat-label">Total products</p>
+       <p class="stat-value">{{ totalProducts }}</p>
     </div>
 
     <div class="stat-card">
